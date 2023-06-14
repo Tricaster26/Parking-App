@@ -24,3 +24,15 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
     image_size=image_size,
     batch_size=batch_size,
 )
+
+import matplotlib.pyplot as plt
+
+aug_ds = keras.Sequential([
+    layers.Rescaling(1./255),
+    layers.RandomRotation(0.2),
+    layers.RandomRotation(0.7),
+    layers.RandomFlip("horizontal_and_vertical"),
+])
+
+def model:
+    
