@@ -6,7 +6,7 @@ image_size = (180, 180)
 batch_size = 128
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
-    "ParksAreUs/Parking Finder Code/Parking_Dataset/test",
+    "Parking_Dataset/train",
     #only have one class
     labels=None,
     # entire folder is our set, no need to split
@@ -17,7 +17,7 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
 )
 
 val_ds = tf.keras.utils.image_dataset_from_directory(
-    "ParksAreUs/Parking Finder Code/Parking_Dataset/valid",
+    "Parking_Dataset/valid",
     labels=None,
     validation_split=None,
     seed=123,
