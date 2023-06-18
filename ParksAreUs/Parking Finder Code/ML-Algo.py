@@ -27,8 +27,10 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
 
 import matplotlib.pyplot as plt
 
+#crop and rotate images to account for randomness in google maps
 aug_ds = keras.Sequential([
-    layers.RandomCrop(180,180)
+    layers.RandomCrop(180,180),
+    layers.RandomRotation(0.5)
 ])
 
 plt.figure(figsize=(10, 10))
@@ -39,7 +41,17 @@ for images in train_ds.take(1):
         plt.imshow(aug_images[i].numpy().astype("uint8"))
         plt.axis("off")
 
-train_ds = train_ds.map(lambda img: (aug_ds(img)),num_parallel_calls=tf.data.AUTOTUNE)
+aug_ds = train_ds.map(lambda img: (aug_ds(img)),num_parallel_calls=tf.data.AUTOTUNE)
 train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
 val_ds = val_ds.prefetch(tf.data.AUTOTUNE)
-def model:
+def prepare(ds , shuffle = False, augment = False):
+    if shuffle:
+        ds = ds.shuffle(1000)
+    #large dataset so lare batch size
+    ds= ds.batch_size(64)
+   if augment:
+     #augment the data
+     ds = ds.map(lambda img: (aug_ds(img, training=True)),
+                 num_parallel_calls=AUTOTUNE)
+    #prefetch to improve performance
+    return ds.prefetch(buffer_size=AUTOTUNE)
