@@ -41,9 +41,7 @@ for images in train_ds.take(1):
         plt.imshow(aug_images[i].numpy().astype("uint8"))
         plt.axis("off")
 
-aug_ds = train_ds.map(lambda img: (aug_ds(img)),num_parallel_calls=tf.data.AUTOTUNE)
-train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
-val_ds = val_ds.prefetch(tf.data.AUTOTUNE)
+
 def prepare(ds , shuffle = False, augment = False):
     if shuffle:
         ds = ds.shuffle(1000)
@@ -55,3 +53,6 @@ def prepare(ds , shuffle = False, augment = False):
                   num_parallel_calls=AUTOTUNE)
      #prefetch to improve performance
     return ds.prefetch(buffer_size=AUTOTUNE)
+
+aug_ds = prepare(train_ds, shuffle = True, augment == True)
+val_ds = prepare(val_ds)
