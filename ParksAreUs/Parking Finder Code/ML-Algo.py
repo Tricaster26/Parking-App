@@ -49,9 +49,9 @@ def prepare(ds , shuffle = False, augment = False):
         ds = ds.shuffle(1000)
     #large dataset so lare batch size
     ds= ds.batch_size(64)
-   if augment:
-     #augment the data
-     ds = ds.map(lambda img: (aug_ds(img, training=True)),
-                 num_parallel_calls=AUTOTUNE)
-    #prefetch to improve performance
+    if augment:
+      #augment the data
+      ds = ds.map(lambda img: (aug_ds(img, training=True)),
+                  num_parallel_calls=AUTOTUNE)
+     #prefetch to improve performance
     return ds.prefetch(buffer_size=AUTOTUNE)
