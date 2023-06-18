@@ -41,18 +41,29 @@ for images in train_ds.take(1):
         plt.imshow(aug_images[i].numpy().astype("uint8"))
         plt.axis("off")
 
+train_ds = train_ds.map(lambda img: (aug_ds(img)),num_parallel_calls=tf.data.AUTOTUNE)
 
 def prepare(ds , shuffle = False, augment = False):
     if shuffle:
         ds = ds.shuffle(1000)
     #large dataset so lare batch size
-    ds= ds.batch_size(64)
     if augment:
       #augment the data
-      ds = ds.map(lambda img: (aug_ds(img, training=True)),
-                  num_parallel_calls=AUTOTUNE)
+      ds = ds.map(lambda img: (aug_ds(img)),num_parallel_calls=tf.data.AUTOTUNE)
      #prefetch to improve performance
-    return ds.prefetch(buffer_size=AUTOTUNE)
+    return ds.prefetch(buffer_size=tf.data.AUTOTUNE)
 
-aug_ds = prepare(train_ds, shuffle = True, augment == True)
+train_ds = prepare(train_ds, shuffle = True, augment = True)
 val_ds = prepare(val_ds)
+
+model = tf.keras.Sequential([
+  layers.Conv2D(16, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Conv2D(32, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Conv2D(64, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Flatten(),
+  layers.Dense(128, activation='relu'),
+  layers.Dense(1)
+])
