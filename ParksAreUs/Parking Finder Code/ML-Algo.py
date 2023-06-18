@@ -47,6 +47,8 @@ def prepare(ds , shuffle = False, augment = False):
     if shuffle:
         ds = ds.shuffle(1000)
     #large dataset so lare batch size
+    # ds= ds.batch(32) (cant map, value error)
+
     if augment:
       #augment the data
       ds = ds.map(lambda img: (aug_ds(img)),num_parallel_calls=tf.data.AUTOTUNE)
