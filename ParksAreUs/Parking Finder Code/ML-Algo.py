@@ -67,5 +67,5 @@ model = tf.keras.Sequential([
   layers.MaxPooling2D(),
   layers.Flatten(),
   layers.Dense(128, activation='relu'),
-  layers.Dense(1)
+  layers.Dense(2)
 ])
