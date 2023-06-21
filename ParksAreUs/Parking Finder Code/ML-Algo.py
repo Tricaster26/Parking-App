@@ -6,9 +6,9 @@ image_size = (320, 320)
 batch_size = 128
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
-    "ParksAreUs/Parking Finder Code/Parking_Dataset/train",
+    "ParksAreUs/Parking Finder Code/train",
     #only have one class
-    labels=None,
+    labels='inferred',
     # entire folder is our set, no need to split
     validation_split=None,
     seed=123,
@@ -17,7 +17,7 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
 )
 
 val_ds = tf.keras.utils.image_dataset_from_directory(
-    "ParksAreUs/Parking Finder Code/Parking_Dataset/valid",
+    "ParksAreUs/Parking Finder Code/valid",
     labels=None,
     validation_split=None,
     seed=123,
@@ -34,24 +34,24 @@ aug_ds = keras.Sequential([
 ])
 
 plt.figure(figsize=(10, 10))
-for images in train_ds.take(1):
+for images, _ in train_ds.take(1):
     for i in range(9):
         aug_images = aug_ds(images)
         ax = plt.subplot(3, 3, i + 1)
         plt.imshow(aug_images[i].numpy().astype("uint8"))
         plt.axis("off")
 
-train_ds = train_ds.map(lambda img: (aug_ds(img)),num_parallel_calls=tf.data.AUTOTUNE)
+train_ds = train_ds.map(lambda img , labels: (aug_ds(img), labels),num_parallel_calls=tf.data.AUTOTUNE)
 
 def prepare(ds , shuffle = False, augment = False):
     if shuffle:
         ds = ds.shuffle(1000)
     #large dataset so lare batch size
-    # ds= ds.batch(32) (cant map, value error)
+    #ds= ds.batch(32)
 
     if augment:
       #augment the data
-      ds = ds.map(lambda img: (aug_ds(img)),num_parallel_calls=tf.data.AUTOTUNE)
+      ds = ds.map(lambda img, label: (aug_ds(img), label),num_parallel_calls=tf.data.AUTOTUNE)
      #prefetch to improve performance
     return ds.prefetch(buffer_size=tf.data.AUTOTUNE)
 
