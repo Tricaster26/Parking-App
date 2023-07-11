@@ -6,18 +6,18 @@ image_size = (320, 320)
 batch_size = 128
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
-    "ParksAreUs/Parking Finder Code/train",
-    #only have one class
+    "Parking Finder Code/train",
+    # we have 2 classes, need more 0
     labels='inferred',
     # entire folder is our set, no need to split
-    validation_split=None,
     seed=123,
+
     image_size=image_size,
     batch_size=batch_size,
 )
 
 val_ds = tf.keras.utils.image_dataset_from_directory(
-    "ParksAreUs/Parking Finder Code/valid",
+    "Parking Finder Code/valid",
     labels=None,
     validation_split=None,
     seed=123,
@@ -47,7 +47,7 @@ def prepare(ds , shuffle = False, augment = False):
     if shuffle:
         ds = ds.shuffle(1000)
     #large dataset so lare batch size
-    #ds= ds.batch(32)
+    #ds = ds.batch(32)
 
     if augment:
       #augment the data
@@ -69,3 +69,19 @@ model = tf.keras.Sequential([
   layers.Dense(128, activation='relu'),
   layers.Dense(2)
 ])
+
+callbacks = [
+    keras.callbacks.ModelCheckpoint("save_at_{epoch}.keras"),
+]
+
+model.compile(
+    optimizer=keras.optimizers.Adam(1e-3),
+    loss="binary_crossentropy",
+    metrics=["accuracy"],
+)
+
+model.fit(
+    train_ds,
+    epochs=25,
+    callbacks=callbacks
+)
